@@ -126,10 +126,12 @@ public class GraphProcessing {
     }
 
     /**
-     * Finds shortest trace between two given nodes. It starts by first getting all the neighbours of the start node and
-     * then for each node it runs Dijkstra algorithm to find the distance from neighbor to target node. In the end it
-     * adds the result from neighbor traversal, and it's distance from starting node. If it is smaller than others it is
-     * chosen to be the shortest trace
+     * Finds shortest trace between two given nodes. If start and end nodes are not same then it
+     * applies Dijkstra directly. Otherwise, it starts by first getting all the neighbours of the
+     * start node and then for each node it runs Dijkstra algorithm to find the distance from
+     * neighbor to target node. In the end it adds the result from neighbor traversal, and it's
+     * distance from starting node. If it is smaller than others it is chosen to be the shortest
+     * trace
      *
      * @param start starting node in graph
      * @param end   ending node in graph
@@ -137,14 +139,21 @@ public class GraphProcessing {
      */
     public Optional<Integer> shortestTraceLength(String start, String end) {
         int latency = Integer.MAX_VALUE;
-        HashMap<String, Integer> neighbors = latencyGraph.get(start);
-        for (String neighbor : neighbors.keySet()) {
-            Integer nl = dijkstraSearch(neighbor, end);
-            nl += neighbors.get(neighbor);
-            if (nl < latency) {
-                latency = nl;
+        // if start and end node are same, dijkstra will not work, so we have to apply dijkstra to neighbours
+        if (start.equals(end)){
+            HashMap<String, Integer> neighbors = latencyGraph.get(start);
+            for (String neighbor : neighbors.keySet()) {
+                Integer nl = dijkstraSearch(neighbor, end);
+                nl += neighbors.get(neighbor);
+                if (nl < latency) {
+                    latency = nl;
+                }
             }
         }
+        else {
+            latency = dijkstraSearch(start,end);
+        }
+
         return (latency < 0 || latency == Integer.MAX_VALUE) ? Optional.empty() : Optional.of(latency);
     }
 
