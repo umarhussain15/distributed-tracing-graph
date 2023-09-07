@@ -39,6 +39,7 @@ public class GraphProcessing {
       System.out.println("Result of tests:");
     }
 
+    // run test to find average latency between given nodes, no extra hops
     for (List<String> averageLatency :
         List.of(
             List.of("A", "B", "C"),
@@ -51,14 +52,20 @@ public class GraphProcessing {
           .ifPresentOrElse(System.out::println, () -> System.out.println("NO SUCH TRACE"));
     }
 
+    // find traces between two nodes with given hops, smaller hops traces are also counted
     System.out.println(graphProcessing.countTraces("C", "C", 3, true));
+    // find traces between two nodes with given hops, only traces equal to given hops count will be
+    // counted
     System.out.println(graphProcessing.countTraces("A", "C", 4, false));
+    // find the shortest trace length between A & C
     graphProcessing
         .shortestTraceLength("A", "C")
         .ifPresentOrElse(System.out::println, () -> System.out.println("NO SUCH TRACE"));
+    // find the shortest trace length between B & B
     graphProcessing
         .shortestTraceLength("B", "B")
         .ifPresentOrElse(System.out::println, () -> System.out.println("NO SUCH TRACE"));
+    // Find traces count between C & C with latency under 30
     System.out.println(graphProcessing.countTracesUnderLatency("C", "C", 30));
   }
 
